@@ -11,6 +11,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
     toggleMessagesDisplay();
 
+    const encryptionRules = [
+        { from: /e/g, to: 'enter' },
+        { from: /i/g, to: 'imes' },
+        { from: /a/g, to: 'ai' },
+        { from: /o/g, to: 'ober' },
+        { from: /u/g, to: 'ufat' }
+    ];
+
+    const decryptionRules = [
+        { from: /enter/g, to: 'e' },
+        { from: /imes/g, to: 'i' },
+        { from: /ai/g, to: 'a' },
+        { from: /ober/g, to: 'o' },
+        { from: /ufat/g, to: 'u' }
+    ];
+
+    btnEncrypt.addEventListener('click', function() {
+        const text = textInput.value;
+        const encryptedText = applyRules(text, encryptionRules);
+        textOutput.value = encryptedText;
+        toggleMessagesDisplay();
+        toggleCopyButton();
+    });
+
+    btnDecrypt.addEventListener('click', function() {
+        const encryptedText = textInput.value;
+        if (isEncrypted(encryptedText, decryptionRules)) {
+            const decryptedText = applyRules(encryptedText, decryptionRules);
+            textOutput.value = decryptedText;
+            toggleMessagesDisplay();
+            toggleCopyButton();
+        }
+    });
+
+    btnCopy.addEventListener('click', function() {
+        const textToCopy = textOutput.value;
+        copyToClipboard(textToCopy);
+    });
+
     function toggleMessagesDisplay() {
         if (textOutput.value.trim() !== "") {
             notFound.style.display = 'none';
@@ -21,41 +60,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    btnEncrypt.addEventListener('click', function() {
-        const text = textInput.value;
-        const encryptedText = encryptText(text);
-        textOutput.value = encryptedText;
-        toggleMessagesDisplay();
-        toggleCopyButton();
-    });
-
-    btnDecrypt.addEventListener('click', function() {
-        const encryptedText = textInput.value;
-        const decryptedText = decryptText(encryptedText);
-        textOutput.value = decryptedText;
-        toggleMessagesDisplay();
-        toggleCopyButton();
-    });
-
-    btnCopy.addEventListener('click', function() {
-        const textToCopy = textOutput.value;
-        copyToClipboard(textToCopy);
-    });
-
-    function encryptText(text) {
-        return text.replace(/e/g, 'enter')
-                   .replace(/i/g, 'imes')
-                   .replace(/a/g, 'ai')
-                   .replace(/o/g, 'ober')
-                   .replace(/u/g, 'ufat');
-    }
-
-    function decryptText(text) {
-        return text.replace(/enter/g, 'e')
-                   .replace(/imes/g, 'i')
-                   .replace(/ai/g, 'a')
-                   .replace(/ober/g, 'o')
-                   .replace(/ufat/g, 'u');
+    function applyRules(text, rules) {
+        let result = text;
+        rules.forEach(rule => {
+            result = result.replace(rule.from, rule.to);
+        });
+        return result;
     }
 
     function copyToClipboard(text) {
@@ -73,5 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             btnCopy.classList.remove('active');
         }
+    }
+
+    function isEncrypted(text, rules) {
+        return rules.some(rule => rule.from.test(text));
     }
 });
