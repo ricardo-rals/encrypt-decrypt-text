@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         textOutput.value = encryptedText;
         toggleMessagesDisplay();
         toggleCopyButton();
+        showAlert('Texto criptografado com sucesso!');
     });
 
     btnDecrypt.addEventListener('click', function() {
@@ -42,12 +43,16 @@ document.addEventListener('DOMContentLoaded', function() {
             textOutput.value = decryptedText;
             toggleMessagesDisplay();
             toggleCopyButton();
+            showAlert('Texto descriptografado com sucesso!');
+        } else {
+            showAlert('O texto de entrada não está criptografado.');
         }
     });
 
     btnCopy.addEventListener('click', function() {
         const textToCopy = textOutput.value;
         copyToClipboard(textToCopy);
+        showAlert('Texto copiado para a área de transferência!');
     });
 
     function toggleMessagesDisplay() {
@@ -87,5 +92,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function isEncrypted(text, rules) {
         return rules.some(rule => rule.from.test(text));
+    }
+
+    function showAlert(message) {
+        const alertContainer = document.getElementById('alertContainer');
+        alertContainer.textContent = message;
+        alertContainer.style.display = 'block';
+        setTimeout(function() {
+            alertContainer.style.display = 'none';
+        }, 2000);
     }
 });
